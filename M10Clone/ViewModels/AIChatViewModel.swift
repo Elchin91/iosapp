@@ -41,29 +41,28 @@ class AIChatViewModel: ObservableObject {
     func initializeSession() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let newSessionId = try await apiService.createSession()
             self.sessionId = newSessionId
-            print("✅ Session created: \(newSessionId)")
-            
-            // Добавляем приветственное сообщение
-            messages.append(Message(
-                text: "Salam! Mən m10 dəstək xidmətindən Aydın. Necə kömək edə bilərəm?",
-                isUser: false
-            ))
-            
+            print("✅ Session created with API: \(newSessionId)")
+
             // Загружаем историю если есть
             await loadHistory()
         } catch {
-            handleError(error)
-            // Даже если сессия не создалась, показываем приветствие
-            messages.append(Message(
-                text: "Salam! Mən m10 dəstək xidmətindən Aydın. Necə kömək edə bilərəm?",
-                isUser: false
-            ))
+            // Если API недоступен, создаем локальную сессию для работы с Telegram
+            let localSessionId = "local-\(UUID().uuidString)"
+            self.sessionId = localSessionId
+            print("⚠️ API unavailable, created local session: \(localSessionId)")
+            print("⚠️ Error: \(error.localizedDescription)")
         }
-        
+
+        // Добавляем приветственное сообщение в любом случае
+        messages.append(Message(
+            text: "Salam! Mən m10 dəstək xidmətindən Aydın. Necə kömək edə bilərəm?",
+            isUser: false
+        ))
+
         isLoading = false
     }
     
@@ -89,63 +88,65 @@ class AIChatViewModel: ObservableObject {
         errorMessage = nil
 
         Task {
+            // Send message to Telegram bot
             do {
-                // Send message to Telegram bot
+                try await telegramService.sendMessage(text: "User: \(currentMessage)")
+                print("✅ Message forwarded to Telegram")
+            } catch {
+                print("⚠️ Failed to send message to Telegram: \(error.localizedDescription)")
+                // Continue even if Telegram fails
+            }
+
+            // Check if we have local session (offline mode) or API session
+            let isLocalSession = sessionId.hasPrefix("local-")
+
+            var assistantResponse: String
+            var responseSources: [MessageSource] = []
+
+            if isLocalSession {
+                // Use fallback response for local session (offline mode)
+                print("ℹ️ Using offline mode (local session)")
+                assistantResponse = generateFallbackResponse(for: currentMessage)
+            } else {
+                // Try to get response from API
                 do {
-                    try await telegramService.sendMessage(text: "User: \(currentMessage)")
-                    print("Message forwarded to Telegram")
-                } catch {
-                    print("Failed to send message to Telegram: \(error.localizedDescription)")
-                    // Continue even if Telegram fails
-                }
+                    let request = ChatRequest(
+                        sessionId: sessionId,
+                        message: currentMessage,
+                        timestamp: Date(),
+                        deviceInfo: DeviceInfo.current
+                    )
 
-                // Создаём запрос
-                let request = ChatRequest(
-                    sessionId: sessionId,
-                    message: currentMessage,
-                    timestamp: Date(),
-                    deviceInfo: DeviceInfo.current
-                )
-
-                // Отправляем на сервер
-                let response = try await apiService.sendMessage(request)
-
-                // Создаём сообщение ассистента
-                let assistantMessage = Message(
-                    id: UUID(uuidString: response.messageId) ?? UUID(),
-                    text: response.answer,
-                    isUser: false,
-                    timestamp: response.timestamp,
-                    sources: response.sources.map { source in
+                    let response = try await apiService.sendMessage(request)
+                    assistantResponse = response.answer
+                    responseSources = response.sources.map { source in
                         MessageSource(
                             title: source.title,
                             url: URL(string: source.url),
                             excerpt: source.excerpt
                         )
                     }
-                )
-
-                messages.append(assistantMessage)
-                print("✅ Message sent and received")
-
-                // Send assistant response to Telegram
-                do {
-                    try await telegramService.sendMessage(text: "Assistant: \(response.answer)")
+                    print("✅ Response received from API")
                 } catch {
-                    print("Failed to send response to Telegram: \(error.localizedDescription)")
+                    print("⚠️ API error, using fallback response: \(error.localizedDescription)")
+                    assistantResponse = generateFallbackResponse(for: currentMessage)
                 }
+            }
 
+            // Add assistant message to UI
+            let assistantMessage = Message(
+                text: assistantResponse,
+                isUser: false,
+                sources: responseSources.isEmpty ? nil : responseSources
+            )
+            messages.append(assistantMessage)
+
+            // Send assistant response to Telegram
+            do {
+                try await telegramService.sendMessage(text: "Assistant: \(assistantResponse)")
+                print("✅ Response forwarded to Telegram")
             } catch {
-                handleError(error)
-                // Удаляем сообщение пользователя если произошла ошибка
-                if let lastMessage = messages.last, lastMessage.id == userMessage.id {
-                    messages.removeLast()
-                }
-                // Показываем fallback ответ
-                messages.append(Message(
-                    text: generateFallbackResponse(for: currentMessage),
-                    isUser: false
-                ))
+                print("⚠️ Failed to send response to Telegram: \(error.localizedDescription)")
             }
 
             isTyping = false
@@ -212,57 +213,69 @@ class AIChatViewModel: ObservableObject {
     // MARK: - Telegram Integration
 
     private func handleTelegramMessage(_ text: String) {
-        print("Handling Telegram message: \(text)")
+        print("📨 Handling Telegram message: \(text)")
 
         // Add message from Telegram to the chat
         let telegramMessage = Message(
-            text: text,
+            text: "📱 Telegram: \(text)",
             isUser: false
         )
         messages.append(telegramMessage)
 
-        // Optionally, you can also process this message through the API
-        // and send the response back to Telegram
+        // Process message through API or use fallback
         Task {
             guard let sessionId = sessionId else { return }
 
             isTyping = true
 
-            do {
-                let request = ChatRequest(
-                    sessionId: sessionId,
-                    message: text,
-                    timestamp: Date(),
-                    deviceInfo: DeviceInfo.current
-                )
+            let isLocalSession = sessionId.hasPrefix("local-")
+            var assistantResponse: String
+            var responseSources: [MessageSource] = []
 
-                let response = try await apiService.sendMessage(request)
+            if isLocalSession {
+                // Use fallback response for local session
+                print("ℹ️ Processing Telegram message in offline mode")
+                assistantResponse = generateFallbackResponse(for: text)
+            } else {
+                // Try to get response from API
+                do {
+                    let request = ChatRequest(
+                        sessionId: sessionId,
+                        message: text,
+                        timestamp: Date(),
+                        deviceInfo: DeviceInfo.current
+                    )
 
-                let assistantMessage = Message(
-                    id: UUID(uuidString: response.messageId) ?? UUID(),
-                    text: response.answer,
-                    isUser: false,
-                    timestamp: response.timestamp,
-                    sources: response.sources.map { source in
+                    let response = try await apiService.sendMessage(request)
+                    assistantResponse = response.answer
+                    responseSources = response.sources.map { source in
                         MessageSource(
                             title: source.title,
                             url: URL(string: source.url),
                             excerpt: source.excerpt
                         )
                     }
-                )
-
-                messages.append(assistantMessage)
-
-                // Send response back to Telegram
-                do {
-                    try await telegramService.sendMessage(text: "Assistant: \(response.answer)")
+                    print("✅ API response for Telegram message")
                 } catch {
-                    print("Failed to send response to Telegram: \(error.localizedDescription)")
+                    print("⚠️ API error for Telegram message, using fallback")
+                    assistantResponse = generateFallbackResponse(for: text)
                 }
+            }
 
+            // Add assistant response to UI
+            let assistantMessage = Message(
+                text: assistantResponse,
+                isUser: false,
+                sources: responseSources.isEmpty ? nil : responseSources
+            )
+            messages.append(assistantMessage)
+
+            // Send response back to Telegram
+            do {
+                try await telegramService.sendMessage(text: "Assistant: \(assistantResponse)")
+                print("✅ Response sent back to Telegram")
             } catch {
-                print("Error processing Telegram message: \(error.localizedDescription)")
+                print("⚠️ Failed to send response to Telegram: \(error.localizedDescription)")
             }
 
             isTyping = false
