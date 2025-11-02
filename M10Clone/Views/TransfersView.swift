@@ -9,16 +9,44 @@ import SwiftUI
 
 struct TransfersView: View {
     @State private var recipientInput = ""
+    @State private var amount = ""
     @State private var selectedTransferType: TransferType = .phone
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
+                    // Transfer amount card
+                    VStack(spacing: 16) {
+                        Text("Сумма")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(AppColors.textSecondary)
+                        
+                        HStack {
+                            TextField("0", text: $amount)
+                                .font(.system(size: 48, weight: .bold))
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(AppColors.textPrimary)
+                            
+                            Text("₼")
+                                .font(.system(size: 36, weight: .semibold))
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(24)
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
                     // Transfer type selector
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Кому")
-                            .font(.headline)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(AppColors.textSecondary)
+                            .padding(.horizontal, 16)
 
                         Picker("Тип перевода", selection: $selectedTransferType) {
                             Text("По телефону").tag(TransferType.phone)
@@ -26,96 +54,127 @@ struct TransfersView: View {
                             Text("По счету").tag(TransferType.account)
                         }
                         .pickerStyle(.segmented)
+                        .padding(.horizontal, 16)
 
-                        HStack {
+                        HStack(spacing: 12) {
                             Image(systemName: selectedTransferType.icon)
+                                .font(.system(size: 20))
                                 .foregroundColor(AppColors.primary)
+                                .frame(width: 40)
 
                             TextField(selectedTransferType.placeholder, text: $recipientInput)
+                                .font(.system(size: 16))
                                 .keyboardType(selectedTransferType.keyboardType)
-                                .textFieldStyle(.plain)
                         }
-                        .padding()
-                        .background(AppColors.background)
+                        .padding(16)
+                        .background(Color.white)
                         .cornerRadius(12)
+                        .padding(.horizontal, 16)
                     }
-                    .padding(.horizontal)
 
                     // Recent contacts
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Недавние")
-                            .font(.headline)
-                            .padding(.horizontal)
+                            .font(.system(size: 20, weight: .bold))
+                            .padding(.horizontal, 16)
 
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
-                                ContactButton(name: "Иван", initial: "И", color: AppColors.primary)
-                                ContactButton(name: "Мария", initial: "М", color: AppColors.secondary)
-                                ContactButton(name: "Петр", initial: "П", color: AppColors.accent)
-                                ContactButton(name: "Анна", initial: "А", color: AppColors.primaryLight)
+                                ContactButton(name: "Иван", initial: "И", phone: "+994 50 123 45 67", color: AppColors.primary)
+                                ContactButton(name: "Мария", initial: "М", phone: "+994 55 234 56 78", color: AppColors.secondary)
+                                ContactButton(name: "Петр", initial: "П", phone: "+994 70 345 67 89", color: AppColors.accent)
+                                ContactButton(name: "Анна", initial: "А", phone: "+994 77 456 78 90", color: Color(hex: "FF6B9D"))
                             }
-                            .padding(.horizontal)
+                            .padding(.horizontal, 16)
                         }
                     }
 
                     // Transfer templates
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Шаблоны переводов")
-                            .font(.headline)
-                            .padding(.horizontal)
+                            .font(.system(size: 20, weight: .bold))
+                            .padding(.horizontal, 16)
 
-                        VStack(spacing: 12) {
-                            TransferTemplateRow(
-                                name: "Иван Петров",
-                                phone: "+7 (999) 123-45-67",
-                                amount: "5,000 ₽"
-                            )
-                            TransferTemplateRow(
-                                name: "Мария Сидорова",
-                                phone: "+7 (999) 987-65-43",
-                                amount: "2,500 ₽"
-                            )
+                        VStack(spacing: 0) {
+                            ForEach(transferTemplates, id: \.id) { template in
+                                TransferTemplateRow(
+                                    name: template.name,
+                                    phone: template.phone,
+                                    amount: template.amount
+                                )
+                                if template.id != transferTemplates.last?.id {
+                                    Divider().padding(.leading, 72)
+                                }
+                            }
                         }
-                        .padding(.horizontal)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                        .padding(.horizontal, 16)
                     }
 
                     // Info banner
                     HStack(spacing: 12) {
                         Image(systemName: "info.circle.fill")
+                            .font(.system(size: 20))
                             .foregroundColor(AppColors.primary)
-
+                        
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Переводы без комиссии")
-                                .font(.subheadline.bold())
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(AppColors.textPrimary)
-                            Text("Моментально на любую карту")
-                                .font(.caption)
+                            Text("Моментально на любую карту Азербайджана")
+                                .font(.system(size: 13))
                                 .foregroundColor(AppColors.textSecondary)
                         }
-
+                        
                         Spacer()
                     }
-                    .padding()
+                    .padding(16)
                     .background(AppColors.primary.opacity(0.1))
-                    .cornerRadius(12)
-                    .padding(.horizontal)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
 
-                    Spacer(minLength: 20)
-                }
-                .padding(.vertical)
-            }
-            .background(Color.white)
-            .navigationTitle("Переводы")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "qrcode.viewfinder")
-                            .foregroundColor(AppColors.primary)
+                    // Send button
+                    Button(action: {
+                        // Отправить перевод
+                    }) {
+                        Text("Отправить")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(18)
+                            .background(
+                                LinearGradient(
+                                    colors: [AppColors.primary, AppColors.primaryDark],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(16)
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
+                }
+            }
+            .background(AppColors.background)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Переводы")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(AppColors.textPrimary)
                 }
             }
         }
+    }
+    
+    var transferTemplates: [TransferTemplate] {
+        [
+            TransferTemplate(id: UUID(), name: "Иван Петров", phone: "+994 50 123 45 67", amount: "5,000 ₼"),
+            TransferTemplate(id: UUID(), name: "Мария Сидорова", phone: "+994 55 234 56 78", amount: "2,500 ₼"),
+            TransferTemplate(id: UUID(), name: "Петр Иванов", phone: "+994 70 345 67 89", amount: "1,000 ₼")
+        ]
     }
 }
 
@@ -134,7 +193,7 @@ enum TransferType {
 
     var placeholder: String {
         switch self {
-        case .phone: return "+7 (___) ___-__-__"
+        case .phone: return "+994 50 123 45 67"
         case .card: return "Номер карты"
         case .account: return "Номер счета"
         }
@@ -147,26 +206,35 @@ enum TransferType {
     }
 }
 
+struct TransferTemplate: Identifiable {
+    let id: UUID
+    let name: String
+    let phone: String
+    let amount: String
+}
+
 struct ContactButton: View {
     let name: String
     let initial: String
+    let phone: String
     let color: Color
 
     var body: some View {
         VStack(spacing: 8) {
             Circle()
-                .fill(color.opacity(0.1))
-                .frame(width: 60, height: 60)
+                .fill(color.opacity(0.15))
+                .frame(width: 64, height: 64)
                 .overlay(
                     Text(initial)
-                        .font(.title2.bold())
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(color)
                 )
-
+            
             Text(name)
-                .font(.caption)
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(AppColors.textPrimary)
         }
+        .frame(width: 80)
     }
 }
 
@@ -178,31 +246,35 @@ struct TransferTemplateRow: View {
     var body: some View {
         HStack(spacing: 16) {
             Circle()
-                .fill(AppColors.primary.opacity(0.1))
+                .fill(AppColors.primary.opacity(0.15))
                 .frame(width: 48, height: 48)
                 .overlay(
                     Image(systemName: "person.fill")
+                        .font(.system(size: 20))
                         .foregroundColor(AppColors.primary)
                 )
-
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(name)
-                    .font(.body)
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(AppColors.textPrimary)
                 Text(phone)
-                    .font(.caption)
+                    .font(.system(size: 13))
                     .foregroundColor(AppColors.textSecondary)
             }
-
+            
             Spacer()
-
-            Text(amount)
-                .font(.body.bold())
-                .foregroundColor(AppColors.primary)
+            
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(amount)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(AppColors.primary)
+                Text("Шаблон")
+                    .font(.system(size: 11))
+                    .foregroundColor(AppColors.textSecondary)
+            }
         }
-        .padding()
-        .background(AppColors.background)
-        .cornerRadius(12)
+        .padding(16)
     }
 }
 

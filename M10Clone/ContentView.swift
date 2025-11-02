@@ -43,6 +43,16 @@ struct ContentView: View {
                 .tag(Tab.profile)
         }
         .tint(AppColors.primary)
+        .onAppear {
+            // Настройка цвета таббара
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor.systemBackground
+            UITabBar.appearance().standardAppearance = appearance
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = appearance
+            }
+        }
     }
 }
 
