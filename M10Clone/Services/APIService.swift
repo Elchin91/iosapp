@@ -41,7 +41,7 @@ class APIService {
     
     // MARK: - Configuration
     // Установите useMockMode = true для тестирования без backend
-    private let useMockMode = false  // Измените на true для mock режима
+    private let useMockMode = APIConfig.useMockMode
     
     private let baseURL: String
     private let session: URLSession
@@ -66,7 +66,7 @@ class APIService {
         
         struct EmptyBody: Encodable {}
         
-        let response: SessionResponse = try await post(endpoint: APIEndpoint.createSession.path, body: EmptyBody())
+        let response: SessionResponse = try await post(endpoint: APIConfig.APIEndpoint.createSession.path, body: EmptyBody())
         return response.sessionId
     }
     
@@ -75,11 +75,15 @@ class APIService {
             return try await mockSendMessage(request)
         }
         
-        return try await post(endpoint: APIEndpoint.sendMessage.path, body: request)
+        return try await post(endpoint: APIConfig.APIEndpoint.sendMessage.path, body: request)
     }
     
     func getChatHistory(sessionId: String, limit: Int = 50) async throws -> [Message] {
-        let endpoint = APIEndpoint.getHistory(sessionId: sessionId, limit: limit).path
+        if useMockMode {
+            return []
+        }
+        
+        let endpoint = APIConfig.APIEndpoint.getHistory(sessionId: sessionId, limit: limit).path
         
         struct HistoryResponse: Codable {
             let messages: [MessageDTO]
@@ -212,7 +216,7 @@ class APIService {
             timestamp: Date(),
             metadata: ResponseMetadata(
                 tokensUsed: 250,
-                model: "kimi-k2-turbo-preview",
+                model: APIConfig.Kimi.model,
                 confidence: 0.85
             )
         )
