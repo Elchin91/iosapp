@@ -271,6 +271,12 @@ class AIChatViewModel: ObservableObject {
 
     deinit {
         // Stop polling when view model is destroyed
-        telegramService.stopPolling()
+        // Note: We need to use nonisolated context for cleanup
+        let service = telegramService
+        Task.detached {
+            await MainActor.run {
+                service.stopPolling()
+            }
+        }
     }
 }
