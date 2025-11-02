@@ -118,13 +118,7 @@ struct MessageBubble: View {
             if !message.isUser {
                 // AI Avatar
                 Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [AppColors.primary, AppColors.primaryDark],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(AppColors.brandPrimary)
                     .frame(width: 36, height: 36)
                     .overlay(
                         Image(systemName: "sparkles")
@@ -140,16 +134,8 @@ struct MessageBubble: View {
                     .padding(.vertical, 12)
                     .background(
                         message.isUser
-                            ? LinearGradient(
-                                colors: [AppColors.primary, AppColors.primaryDark],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            : LinearGradient(
-                                colors: [Color.white, Color.white],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                            ? AppColors.primary
+                            : Color.white
                     )
                     .foregroundColor(message.isUser ? .white : AppColors.textPrimary)
                     .cornerRadius(20)
@@ -192,7 +178,7 @@ struct TypingIndicator: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(AppColors.aiBubble)
+            .background(AppColors.backgroundSecondary)
             .cornerRadius(20)
 
             Spacer()

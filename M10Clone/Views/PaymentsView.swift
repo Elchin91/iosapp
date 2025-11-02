@@ -8,179 +8,231 @@
 import SwiftUI
 
 struct PaymentsView: View {
-    @State private var searchText = ""
-
-    let categories = [
-        PaymentCategory(icon: "phone.fill", title: "Мобильная связь", color: AppColors.primary, description: "Azercell, Bakcell, Nar"),
-        PaymentCategory(icon: "bolt.fill", title: "Коммунальные", color: Color(hex: "FF6B35"), description: "Qaz, İşıq, Su"),
-        PaymentCategory(icon: "wifi", title: "Интернет", color: Color(hex: "4ECDC4"), description: "AiləNet, Avirtel, AzerOnline"),
-        PaymentCategory(icon: "tv.fill", title: "ТВ и Стриминг", color: Color(hex: "FF6B9D"), description: "AiləTV, ATV Plus"),
-        PaymentCategory(icon: "gamecontroller.fill", title: "Игры", color: AppColors.primary, description: "Steam, Warface, PUBG"),
-        PaymentCategory(icon: "cart.fill", title: "Онлайн магазины", color: Color(hex: "9B59B6"), description: "Lalafo, Wolt, Bolt"),
-        PaymentCategory(icon: "building.columns.fill", title: "Банки", color: Color(hex: "3498DB"), description: "Кредиты, вклады"),
-        PaymentCategory(icon: "car.fill", title: "Парковка", color: Color(hex: "E67E22"), description: "AzParking, BCR Parking")
-    ]
-
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    // Search bar
-                    HStack(spacing: 12) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(AppColors.textSecondary)
-                        
-                        TextField("Поиск услуг", text: $searchText)
-                            .font(.system(size: 16))
+                    // Header with title and search
+                    HStack {
+                        Text("Сервисы")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(AppColors.textPrimary)
+                        Spacer()
+                        Button(action: {}) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 20))
+                                .foregroundColor(AppColors.textPrimary)
+                        }
                     }
-                    .padding(16)
-                    .background(Color.white)
-                    .cornerRadius(12)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
-
-                    // Categories grid
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 12),
-                        GridItem(.flexible(), spacing: 12)
-                    ], spacing: 12) {
-                        ForEach(categories) { category in
-                            PaymentCategoryCard(category: category)
+                    .padding(.bottom, 16)
+                    
+                    // Services cards horizontal scroll
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ServicePromoCard(
+                                title: "Мой гараж",
+                                backgroundColor: AppColors.backgroundSecondary,
+                                isNew: true
+                            )
+                            ServicePromoCard(
+                                title: "Кабинет Azeriqaz",
+                                backgroundColor: AppColors.backgroundSecondary,
+                                isNew: true
+                            )
                         }
+                        .padding(.horizontal, 16)
                     }
-                    .padding(16)
-
-                    // Recent payments
+                    .padding(.bottom, 24)
+                    
+                    // Мои платежи section
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
-                            Text("Недавние платежи")
+                            Text("Мои платежи")
                                 .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(AppColors.textPrimary)
                             Spacer()
-                        }
-                        .padding(.horizontal, 16)
-
-                        VStack(spacing: 0) {
-                            ForEach(recentPayments, id: \.id) { payment in
-                                RecentPaymentRow(
-                                    icon: payment.icon,
-                                    title: payment.title,
-                                    subtitle: payment.subtitle,
-                                    color: payment.color
-                                )
-                                if payment.id != recentPayments.last?.id {
-                                    Divider().padding(.leading, 72)
-                                }
+                            Button("Все >") {
+                                // Show all payments
                             }
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(AppColors.textPrimary)
                         }
-                        .background(Color.white)
-                        .cornerRadius(16)
                         .padding(.horizontal, 16)
+                        
+                        // Payment shortcuts horizontal scroll
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                PaymentShortcutCard(
+                                    icon: "phone.fill",
+                                    title: "Мой номер",
+                                    backgroundColor: Color(hex: "E3F2FD")
+                                )
+                                PaymentShortcutCard(
+                                    icon: "phone.fill",
+                                    title: "Azercell",
+                                    subtitle: "102533806",
+                                    backgroundColor: Color(hex: "E8EAF6")
+                                )
+                                PaymentShortcutCard(
+                                    icon: "phone.fill",
+                                    title: "Azercell",
+                                    subtitle: "505199991",
+                                    backgroundColor: Color(hex: "E8EAF6")
+                                )
+                                PaymentShortcutCard(
+                                    icon: "phone.fill",
+                                    title: "Nar",
+                                    subtitle: "99450123456",
+                                    backgroundColor: Color(hex: "E8EAF6")
+                                )
+                            }
+                            .padding(.horizontal, 16)
+                        }
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 24)
+                    
+                    // Payment categories list
+                    VStack(spacing: 0) {
+                        PaymentCategoryRow(
+                            icon: "phone.fill",
+                            title: "Мобильные операторы",
+                            percentage: "2%"
+                        )
+                        Divider().padding(.leading, 72)
+                        PaymentCategoryRow(
+                            icon: "house.fill",
+                            title: "Коммунальные услуги",
+                            percentage: "2%"
+                        )
+                        Divider().padding(.leading, 72)
+                        PaymentCategoryRow(
+                            icon: "creditcard.fill",
+                            title: "BakıKart"
+                        )
+                        Divider().padding(.leading, 72)
+                        PaymentCategoryRow(
+                            icon: "building.columns.fill",
+                            title: "Банковские услуги"
+                        )
+                        Divider().padding(.leading, 72)
+                        PaymentCategoryRow(
+                            icon: "doc.text.fill",
+                            title: "Штрафы"
+                        )
+                    }
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 100)
                 }
             }
             .background(AppColors.background)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Платежи")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(AppColors.textPrimary)
+                    EmptyView()
                 }
             }
         }
     }
-    
-    var recentPayments: [RecentPayment] {
-        [
-            RecentPayment(id: UUID(), icon: "phone.fill", title: "Azercell", subtitle: "+994 50 123 45 67", color: AppColors.primary),
-            RecentPayment(id: UUID(), icon: "wifi", title: "AiləNet", subtitle: "Договор 123456789", color: Color(hex: "4ECDC4")),
-            RecentPayment(id: UUID(), icon: "bolt.fill", title: "AzəriQaz", subtitle: "Квартира 45", color: Color(hex: "FF6B35")),
-            RecentPayment(id: UUID(), icon: "tv.fill", title: "AiləTV", subtitle: "Абонент 987654", color: Color(hex: "FF6B9D"))
-        ]
-    }
 }
 
-struct PaymentCategory: Identifiable {
-    let id = UUID()
-    let icon: String
+struct ServicePromoCard: View {
     let title: String
-    let color: Color
-    let description: String
-}
-
-struct PaymentCategoryCard: View {
-    let category: PaymentCategory
-
+    let backgroundColor: Color
+    let isNew: Bool
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: category.icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(category.color)
-                    .frame(width: 48, height: 48)
-                    .background(category.color.opacity(0.15))
-                    .clipShape(Circle())
-                
-                Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            if isNew {
+                HStack {
+                    Text("Новинка")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(hex: "76BC1E"))
+                        .cornerRadius(12)
+                    Spacer()
+                }
+                .padding(.bottom, 8)
             }
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(category.title)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(AppColors.textPrimary)
-                Text(category.description)
-                    .font(.system(size: 12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
-            }
+            Text(title)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(AppColors.textPrimary)
+                .multilineTextAlignment(.leading)
+            
+            Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(width: 172.5, height: 132)
         .padding(16)
-        .background(Color.white)
+        .background(backgroundColor)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
 }
 
-struct RecentPayment: Identifiable {
-    let id: UUID
+struct PaymentShortcutCard: View {
     let icon: String
     let title: String
-    let subtitle: String
-    let color: Color
+    var subtitle: String? = nil
+    let backgroundColor: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(AppColors.textPrimary)
+                .frame(width: 56, height: 56)
+                .background(backgroundColor)
+                .cornerRadius(12)
+            
+            VStack(spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(AppColors.textPrimary)
+                    .multilineTextAlignment(.center)
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 10, weight: .regular))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+        }
+        .frame(width: 80)
+    }
 }
 
-struct RecentPaymentRow: View {
+struct PaymentCategoryRow: View {
     let icon: String
     let title: String
-    let subtitle: String
-    let color: Color
-
+    var percentage: String? = nil
+    
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
-                .font(.system(size: 20))
-                .foregroundColor(.white)
-                .frame(width: 48, height: 48)
-                .background(color)
-                .clipShape(Circle())
+                .font(.system(size: 24))
+                .foregroundColor(Color(hex: "76BC1E"))
+                .frame(width: 40, height: 40)
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(AppColors.textPrimary)
-                Text(subtitle)
-                    .font(.system(size: 13))
-                    .foregroundColor(AppColors.textSecondary)
-            }
+            Text(title)
+                .font(.system(size: 16, weight: .regular))
+                .foregroundColor(AppColors.textPrimary)
             
             Spacer()
             
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14))
-                .foregroundColor(AppColors.textSecondary)
+            if let percentage = percentage {
+                Text("◆ \(percentage)")
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: "6946F7"))
+                    .cornerRadius(12)
+            }
         }
         .padding(16)
     }

@@ -8,32 +8,35 @@
 import SwiftUI
 
 struct AppColors {
-    // Primary M10 purple color
-    static let primary = Color(hex: "7B3FF2")
-    static let primaryLight = Color(hex: "9D6FF5")
-    static let primaryDark = Color(hex: "5E2FBF")
-
+    // Primary colors from CSS
+    static let primary = Color(hex: "1D2331") // icon/primary, text/primary-default
+    static let brandPrimary = Color(hex: "03EDC3") // brand/primary
+    
     // Secondary colors
-    static let secondary = Color(hex: "A855F7")
-    static let accent = Color(hex: "C084FC")
-
+    static let secondary = Color(hex: "8E9198") // text/secondary-default
+    static let iconSecondary = Color(hex: "777B83") // icon/secondary
+    
     // Background colors
-    static let background = Color(hex: "F8F9FA")
+    static let background = Color(hex: "FFFFFF") // surface/primary-default
+    static let backgroundSecondary = Color(hex: "F3F4F4") // surface/secondary-default
+    static let backgroundSecondaryPressed = Color(hex: "E9E9EB") // surface/secondary-pressed
     static let cardBackground = Color.white
-    static let darkBackground = Color(hex: "1A1A2E")
 
     // Text colors
-    static let textPrimary = Color(hex: "1F2937")
-    static let textSecondary = Color(hex: "6B7280")
-    static let textLight = Color.white
+    static let textPrimary = Color(hex: "1D2331") // text/primary-default
+    static let textSecondary = Color(hex: "8E9198") // text/secondary-default
+    static let textLight = Color.white // text/invert
+    static let colorPrimary = Color(hex: "14234B") // color.primary
 
-    // Chat bubble colors
-    static let userBubble = Color(hex: "7B3FF2")
-    static let aiBubble = Color(hex: "F3F4F6")
-
+    // Border colors
+    static let borderPrimary = Color(hex: "1D2331") // boarder/primary
+    
+    // Brand colors
+    static let brandAccent = Color(hex: "6946F7")
+    
     // System colors
     static let success = Color(hex: "10B981")
-    static let error = Color(hex: "EF4444")
+    static let error = Color(hex: "FF3333") // icon/error
     static let warning = Color(hex: "F59E0B")
 }
 
