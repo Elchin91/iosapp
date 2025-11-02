@@ -10,13 +10,11 @@ import Foundation
 struct APIConfig {
     // MARK: - Backend Configuration
     #if DEBUG
-    // Для локального тестирования используйте IP адрес вашего компьютера
-    // ВАЖНО: Замените на ваш реальный IP адрес!
-    static let baseURL = "http://192.168.1.72:8000/api/v1"  // Обновлено для Telegram интеграции
+    // Локальный backend с полной поддержкой Confluence, Kimi AI, NER
+    static let baseURL = "http://localhost:8000/api/v1"
     #else
-    // Для production используйте реальный URL вашего backend
-    // Например: "https://your-app.railway.app/api/v1"
-    static let baseURL = "https://m10-backend.railway.app/api/v1"
+    // Production backend (будет настроено при деплое)
+    static let baseURL = "https://m10-support-ai.railway.app/api/v1"
     #endif
     
     // MARK: - Kimi K2 API Configuration (для справки, используется на backend)
@@ -54,7 +52,7 @@ struct APIConfig {
     }
     
     // MARK: - Mock Mode Configuration
-    // Установите true для тестирования без backend
-    // Установите false когда backend запущен
-    static let useMockMode = false  // Изменено для работы с реальным backend и Telegram
+    // false = используем полноценный backend с Confluence, Kimi AI, NER, Vector Search
+    // true = используем локальные fallback ответы
+    static let useMockMode = false
 }
