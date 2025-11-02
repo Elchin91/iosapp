@@ -81,8 +81,8 @@ struct TransfersView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
                                 ContactButton(name: "Иван", initial: "И", phone: "+994 50 123 45 67", color: AppColors.primary)
-                                ContactButton(name: "Мария", initial: "М", phone: "+994 55 234 56 78", color: AppColors.secondary)
-                                ContactButton(name: "Петр", initial: "П", phone: "+994 70 345 67 89", color: AppColors.accent)
+                                ContactButton(name: "Мария", initial: "М", phone: "+994 55 234 56 78", color: AppColors.brandAccent)
+                                ContactButton(name: "Петр", initial: "П", phone: "+994 70 345 67 89", color: AppColors.brandPrimary)
                                 ContactButton(name: "Анна", initial: "А", phone: "+994 77 456 78 90", color: Color(hex: "FF6B9D"))
                             }
                             .padding(.horizontal, 16)
@@ -144,13 +144,7 @@ struct TransfersView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(18)
-                            .background(
-                                LinearGradient(
-                                    colors: [AppColors.primary, AppColors.primaryDark],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .background(AppColors.primary)
                             .cornerRadius(16)
                     }
                     .padding(.horizontal, 16)
