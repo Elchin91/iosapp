@@ -19,7 +19,7 @@ struct PaymentsView: View {
                             .foregroundColor(AppColors.textPrimary)
                         Spacer()
                         Button(action: {}) {
-                            Image(systemName: "magnifyingglass")
+                        Image(systemName: "magnifyingglass")
                                 .font(.system(size: 20))
                                 .foregroundColor(AppColors.textPrimary)
                         }
@@ -45,7 +45,7 @@ struct PaymentsView: View {
                         .padding(.horizontal, 16)
                     }
                     .padding(.bottom, 24)
-                    
+
                     // Мои платежи section
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
@@ -60,7 +60,7 @@ struct PaymentsView: View {
                             .foregroundColor(AppColors.textPrimary)
                         }
                         .padding(.horizontal, 16)
-                        
+
                         // Payment shortcuts horizontal scroll
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
@@ -116,15 +116,15 @@ struct PaymentsView: View {
                             icon: "building.columns.fill",
                             title: "Банковские услуги"
                         )
-                        Divider().padding(.leading, 72)
+                                    Divider().padding(.leading, 72)
                         PaymentCategoryRow(
                             icon: "doc.text.fill",
                             title: "Штрафы"
                         )
-                    }
-                    .background(Color.white)
-                    .cornerRadius(16)
-                    .padding(.horizontal, 16)
+                        }
+                        .background(Color.white)
+                        .cornerRadius(16)
+                        .padding(.horizontal, 16)
                     .padding(.bottom, 100)
                 }
             }
@@ -143,11 +143,11 @@ struct ServicePromoCard: View {
     let title: String
     let backgroundColor: Color
     let isNew: Bool
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if isNew {
-                HStack {
+            HStack {
                     Text("Новинка")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.white)
@@ -155,14 +155,14 @@ struct ServicePromoCard: View {
                         .padding(.vertical, 4)
                         .background(Color(hex: "76BC1E"))
                         .cornerRadius(12)
-                    Spacer()
+                Spacer()
                 }
                 .padding(.bottom, 8)
             }
             
             Text(title)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(AppColors.textPrimary)
+                    .foregroundColor(AppColors.textPrimary)
                 .multilineTextAlignment(.leading)
             
             Spacer()
@@ -210,7 +210,7 @@ struct PaymentCategoryRow: View {
     let icon: String
     let title: String
     var percentage: String? = nil
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
@@ -218,9 +218,9 @@ struct PaymentCategoryRow: View {
                 .foregroundColor(Color(hex: "76BC1E"))
                 .frame(width: 40, height: 40)
             
-            Text(title)
+                Text(title)
                 .font(.system(size: 16, weight: .regular))
-                .foregroundColor(AppColors.textPrimary)
+                    .foregroundColor(AppColors.textPrimary)
             
             Spacer()
             
