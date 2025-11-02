@@ -12,7 +12,7 @@ struct APIConfig {
     #if DEBUG
     // Для локального тестирования используйте IP адрес вашего компьютера
     // ВАЖНО: Замените на ваш реальный IP адрес!
-    static let baseURL = "http://192.168.1.100:8000/api/v1"  // TODO: Замените на ваш IP
+    static let baseURL = "http://192.168.1.72:8000/api/v1"  // Обновлено для Telegram интеграции
     #else
     // Для production используйте реальный URL вашего backend
     // Например: "https://your-app.railway.app/api/v1"
@@ -56,5 +56,5 @@ struct APIConfig {
     // MARK: - Mock Mode Configuration
     // Установите true для тестирования без backend
     // Установите false когда backend запущен
-    static let useMockMode = false  // Изменено для работы с реальным backend
+    static let useMockMode = false  // Изменено для работы с реальным backend и Telegram
 }
