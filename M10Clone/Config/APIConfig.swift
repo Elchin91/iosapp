@@ -12,7 +12,7 @@ struct APIConfig {
     #if DEBUG
     // Для локального тестирования используйте IP адрес вашего компьютера
     // Например: "http://192.168.1.100:8000/api/v1"
-    static let baseURL = "http://localhost:8000/api/v1"
+    static let baseURL = "http://192.168.1.72:8000/api/v1"
     #else
     // Для production используйте реальный URL вашего backend
     // Например: "https://your-app.railway.app/api/v1"
