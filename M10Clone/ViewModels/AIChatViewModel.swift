@@ -271,8 +271,6 @@ class AIChatViewModel: ObservableObject {
 
     deinit {
         // Stop polling when view model is destroyed
-        Task { @MainActor in
-            telegramService.stopPolling()
-        }
+        telegramService.stopPolling()
     }
 }
