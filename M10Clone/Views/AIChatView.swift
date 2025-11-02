@@ -30,14 +30,14 @@ struct AIChatView: View {
                         }
                         .padding()
                     }
-                    .onChange(of: viewModel.messages.count) { _, _ in
+                    .onChange(of: viewModel.messages.count) { _ in
                         withAnimation {
                             if let lastMessage = viewModel.messages.last {
                                 proxy.scrollTo(lastMessage.id, anchor: .bottom)
                             }
                         }
                     }
-                    .onChange(of: viewModel.isTyping) { _, isTyping in
+                    .onChange(of: viewModel.isTyping) { isTyping in
                         if isTyping {
                             withAnimation {
                                 proxy.scrollTo("typing", anchor: .bottom)
@@ -50,7 +50,9 @@ struct AIChatView: View {
 
                 // Input area
                 HStack(spacing: 12) {
-                    Button(action: viewModel.handleAttachment) {
+                    Button(action: {
+                        viewModel.handleAttachment()
+                    }) {
                         Image(systemName: "paperclip")
                             .font(.system(size: 22))
                             .foregroundColor(AppColors.primary)
