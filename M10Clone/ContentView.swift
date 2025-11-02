@@ -69,6 +69,12 @@ struct ContentView: View {
                 UITabBar.appearance().scrollEdgeAppearance = appearance
             }
         }
+        .onChange(of: selectedTab) { newTab in
+            // Скрываем клавиатуру при переходе на другую вкладку
+            if newTab != .ai {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+        }
     }
 }
 
