@@ -101,6 +101,11 @@ iOSInjectionProject/
 
 # Build artifacts (keep only source)
 Build/
+Payload/
+
+# XcodeGen generates this, so ignore it
+*.xcodeproj
+*.xcworkspace
 
 # MCP config (keep it)
 !.mcp.json

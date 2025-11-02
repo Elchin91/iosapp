@@ -86,7 +86,7 @@ M10Clone/
 
 ### Требования
 - Xcode 15.0+
-- iOS 16.0+
+- iOS 15.0+
 - macOS
 - Homebrew
 
@@ -259,7 +259,7 @@ private func generateAIResponse(for userMessage: String) -> String {
 ## Troubleshooting
 
 ### Ошибки компиляции
-- Убедитесь, что iOS Deployment Target = 16.0+
+- Убедитесь, что iOS Deployment Target = 15.0+
 - Проверьте, что все файлы добавлены в target
 
 ### UI не отображается
@@ -282,5 +282,5 @@ private func generateAIResponse(for userMessage: String) -> String {
 
 **Версия:** 1.0
 **Дата:** 2025-11-02
-**Платформа:** iOS 16.0+
-**Язык:** Swift 5.9+
+**Платформа:** iOS 15.0+
+**Язык:** Swift 5.0+
