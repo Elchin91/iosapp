@@ -25,7 +25,7 @@ targets:
     platform: iOS
     deploymentTarget: "15.0"
     sources:
-      - M10Clone
+      - path: M10Clone
     info:
       properties:
         CFBundleDisplayName: M10 Clone
