@@ -35,7 +35,6 @@ targets:
           - "Backend"
           - ".github"
           - "Build"
-          - "Info.plist"
         createIntermediateGroups: true
     info:
       properties:
