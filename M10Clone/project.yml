@@ -3,18 +3,17 @@ name: M10Clone
 options:
   bundleIdPrefix: com.m10clone
   deploymentTarget:
-    iOS: "16.0"
-  developmentLanguage: ru
+    iOS: "15.0"
+  developmentLanguage: en
   xcodeVersion: "15.0"
-  groupSortPosition: top
 
 settings:
   base:
     PRODUCT_NAME: M10Clone
     PRODUCT_BUNDLE_IDENTIFIER: com.m10clone.app
-    SWIFT_VERSION: "5.0"
+    SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1,2"
-    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
     CODE_SIGN_IDENTITY: ""
     CODE_SIGNING_REQUIRED: "NO"
     CODE_SIGNING_ALLOWED: "NO"
@@ -24,18 +23,9 @@ targets:
   M10Clone:
     type: application
     platform: iOS
-    deploymentTarget: "16.0"
+    deploymentTarget: "15.0"
     sources:
-      - path: M10Clone
-        name: M10Clone
-        excludes:
-          - "*.md"
-          - "*.MD"
-          - "backend"
-          - "Backend"
-          - ".github"
-          - "Build"
-        createIntermediateGroups: true
+      - M10Clone
     info:
       properties:
         CFBundleDisplayName: M10 Clone

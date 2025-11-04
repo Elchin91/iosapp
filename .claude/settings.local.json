@@ -1,18 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Remove-Item -Force -ErrorAction SilentlyContinue)",
-      "Bash(Write-Host \"✅ Python cache cleared\" -ForegroundColor Green)",
-      "Bash(git init:*)",
-      "Bash(git remote add:*)",
-      "Bash(git branch:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git config:*)",
-      "Bash(git push:*)",
-      "Bash(git pull:*)",
-      "Bash(git rm:*)",
-      "Bash(awk:*)"
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

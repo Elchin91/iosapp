@@ -2,12 +2,9 @@ name: iOS Build
 
 on:
   push:
-    branches: [ main, master, develop ]
-    paths:
-      - 'M10Clone/**'
-      - '.github/workflows/ios-build.yml'
+    branches: [ main ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -25,13 +22,11 @@ jobs:
         xcode-version: '15.4'
 
     - name: Install XcodeGen
-      run: |
-        brew install xcodegen
+      run: brew install xcodegen
 
     - name: Generate Xcode project
       working-directory: M10Clone
-      run: |
-        xcodegen generate
+      run: xcodegen generate
 
     - name: Build iOS App
       working-directory: M10Clone
@@ -66,12 +61,4 @@ jobs:
       run: |
         echo "### Build Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**App Name:** M10Clone" >> $GITHUB_STEP_SUMMARY
-        echo "**Platform:** iOS" >> $GITHUB_STEP_SUMMARY
-        echo "**Configuration:** Release" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
         echo "Download the IPA from the **Artifacts** section above." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Installation" >> $GITHUB_STEP_SUMMARY
-        echo "1. Download the IPA file" >> $GITHUB_STEP_SUMMARY
-        echo "2. Install using **TrollStore** or **Sideloadly**" >> $GITHUB_STEP_SUMMARY
