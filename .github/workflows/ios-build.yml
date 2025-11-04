@@ -1,0 +1,77 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'M10Clone/**'
+      - '.github/workflows/ios-build.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.4'
+
+    - name: Install XcodeGen
+      run: |
+        brew install xcodegen
+
+    - name: Generate Xcode project
+      working-directory: M10Clone
+      run: |
+        xcodegen generate
+
+    - name: Build iOS App
+      working-directory: M10Clone
+      run: |
+        xcodebuild clean build \
+          -project M10Clone.xcodeproj \
+          -scheme M10Clone \
+          -configuration Release \
+          -destination 'generic/platform=iOS' \
+          -archivePath $PWD/build/M10Clone.xcarchive \
+          archive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Export IPA
+      working-directory: M10Clone
+      run: |
+        mkdir -p build/Payload
+        cp -r build/M10Clone.xcarchive/Products/Applications/M10Clone.app build/Payload/
+        cd build
+        zip -r M10Clone.ipa Payload
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: M10Clone-IPA
+        path: M10Clone/build/M10Clone.ipa
+        retention-days: 30
+
+    - name: Build Summary
+      run: |
+        echo "### Build Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**App Name:** M10Clone" >> $GITHUB_STEP_SUMMARY
+        echo "**Platform:** iOS" >> $GITHUB_STEP_SUMMARY
+        echo "**Configuration:** Release" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Download the IPA from the **Artifacts** section above." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Installation" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download the IPA file" >> $GITHUB_STEP_SUMMARY
+        echo "2. Install using **TrollStore** or **Sideloadly**" >> $GITHUB_STEP_SUMMARY
